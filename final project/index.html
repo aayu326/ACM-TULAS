@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACM Student Chapter - Tula's Institute Dehradun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" crossorigin href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="https://media.licdn.com/dms/image/v2/D560BAQETejMrOaMl9Q/company-logo_200_200/B56Zj9YNZ3HMAI-/0/1756597639780/tulasacm_logo?e=1760572800&v=beta&t=mQcyezljQHf2Rbo-rGAp-VDHFHC-TeblFMdvGbdFV2k" alt="ACM Logo" class="logo-img">
+                <span class="logo-text">ACM Tula's</span>
+            </div>
+<!-- ACM Digital Library Button -->
+<!-- <div style="margin-top: 20px; text-align: center;">
+  <a href="https://roaring-florentine-3e3a4c.netlify.app/" target="_blank" 
+     style="display:inline-block; background:#0077cc; color:#fff; padding:12px 24px; border-radius:30px; font-size:16px; font-weight:600; text-decoration:none; transition:all 0.3s ease;">
+    Visit ACM Digital Library
+  </a>
+</div> -->
+
+
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#events" class="nav-link">Events</a>
+                <a href="#team" class="nav-link">Team</a>
+                <a href="#achievements" class="nav-link">Achievements</a>
+                <a href="#contact" class="nav-link">Contact</a>
+              <li class="nav-item">
+  <a href="https://comforting-phoenix-76c791.netlify.app" 
+     class="btn-admin">Admin Panel</a>
+</li>
+
+
+
+
+<style>
+  .btn-ADL {
+    background-color: #007bff;   /* Blue */
+    color: white;
+    padding: 8px 16px;           /* Button size */
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+  }
+
+  .btn-ADL:hover {
+    background-color: #0056b3;   /* Darker blue on hover */
+  }
+</style>
+
+
+
+ <li class="nav-item">
+  <a href="https://roaring-florentine-3e3a4c.netlify.app/" 
+     class="btn-admin">ADL</a>
+</li>
+
+
+
+
+<style>
+  .btn-admin {
+    background-color: #007bff;   /* Blue */
+    color: white;
+    padding: 8px 16px;           /* Button size */
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+  }
+
+  .btn-admin:hover {
+    background-color: #0056b3;   /* Darker blue on hover */
+  }
+</style>
+
+
+                
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+
+<!-- Firebase SDKs -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDWqiOubarIl64i2qeoJsh3-3WZKDt9BLc",
+      authDomain: "final-acm-30af1.firebaseapp.com",
+      projectId: "final-acm-30af1",
+      storageBucket: "final-acm-30af1.firebasestorage.app",
+      messagingSenderId: "644266603050",
+      appId: "1:644266603050:web:084fce9d5ba53e71120953",
+      measurementId: "G-D9J6XYF8ME"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function listEvents() {
+      const querySnapshot = await getDocs(collection(db, "events"));
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        html += `
+          <li class="events-card">
+            <img src="${data.image || 'https://via.placeholder.com/400x200'}" class="events-image" alt="Event Image">
+            <div class="events-details">
+              <div class="events-title">${data.title}</div>
+              <div class="events-meta">📅 ${data.date || ""} | ⏰ ${data.time || ""} | 📍 ${data.venue || ""}</div>
+              <div class="events-desc">${data.description || ""}</div>
+            </div>
+          </li>`;
+      });
+      document.getElementById("events-list").innerHTML = html;
+    }
+
+    window.onload = listEvents;
+  // Function to fetch events
+  async function loadEvents() {
+    const eventsList = document.getElementById("events-list");
+    eventsList.innerHTML = "<p>Loading events...</p>";
+
+    const querySnapshot = await getDocs(collection(db, "events"));
+    let html = "";
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      html += `
+        <li class="events-card">
+          <img src="${data.image || 'https://via.placeholder.com/400x200'}" class="events-image" alt="Event Image">
+          <div class="events-details">
+            <div class="events-title">${data.title || "No Title"}</div>
+            <div class="events-meta">📅 ${data.date || ""} | ⏰ ${data.time || ""} | 📍 ${data.venue || ""}</div>
+            <div class="events-desc">${data.description || ""}</div>
+          </div>
+        </li>`;
+    });
+
+    eventsList.innerHTML = html || "<p>No events found</p>";
+  }
+
+  // ✅ Call on load
+  window.onload = loadEvents;
+</script>
+
+
+
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+                <div class="shape shape-4"></div>
+                <div class="shape shape-5"></div>
+            </div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="title-line">ACM Student Chapter</span>
+                    <span class="title-line highlight">Tula's Institute</span>
+                    <span class="title-line">Dehradun</span>
+                </h1>
+                <p class="hero-subtitle">Advancing Computing as a Science & Profession</p>
+                <p class="hero-description">Join the world's largest educational and scientific computing society. Connect, learn, and innovate with fellow computing enthusiasts.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="scrollToSection('about')">
+                        <span>Explore More</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    
+                    <button class="btn btn-secondary" onclick="scrollToSection('events')">
+                        <span>Upcoming Events</span>
+                        <i class="fas fa-calendar"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-animation">
+                    <div class="code-line">
+                        <span class="code-keyword">class</span>
+                        <span class="code-class">ACMChapter</span>
+                        <span class="code-bracket">{</span>
+                    </div>
+                    <div class="code-line">
+                        <span class="code-indent">  </span>
+                        <span class="code-keyword">function</span>
+                        <span class="code-function">innovate</span>
+                        <span class="code-bracket">() {</span>
+                    </div>
+                    <div class="code-line">
+                        <span class="code-indent">    </span>
+                        <span class="code-keyword">return</span>
+                        <span class="code-string">"Future Leaders"</span>
+                        <span class="code-semicolon">;</span>
+                    </div>
+                    <div class="code-line">
+                        <span class="code-indent">  </span>
+                        <span class="code-bracket">}</span>
+                    </div>
+                    <div class="code-line">
+                        <span class="code-bracket">}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About ACM Tula's</h2>
+                <p class="section-subtitle">Empowering the next generation of computing professionals</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Our Mission</h3>
+                        <p>To advance computing as a science and profession by fostering innovation, collaboration, and excellence among students at Tula's Institute.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3>Innovation Hub</h3>
+                        <p>We provide a platform for students to explore cutting-edge technologies, participate in hackathons, and develop groundbreaking solutions.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>Learning Excellence</h3>
+                        <p>Through workshops, seminars, and hands-on projects, we ensure our members stay ahead in the rapidly evolving tech landscape.</p>
+                    </div>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="500">0</div>
+                        <div class="stat-label">Active Members</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="50">0</div>
+                        <div class="stat-label">Events Organized</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="25">0</div>
+                        <div class="stat-label">Awards Won</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="100">0</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+
+<!-- Events Section -->
+  <section id="events" class="events">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Upcoming Events</h2>
+        <p class="section-subtitle">Join us for exciting tech events and competitions</p>
+      </div>
+      <div class="events-scroll-wrapper">
+        <ul id="events-list" class="events-list"></ul>
+      </div>
+    </div>
+  </section>
+
+<!-- Inline CSS for cards, scrolling, and hover -->
+
+
+<style>
+.events-scroll-wrapper {
+    overflow-x: auto;
+  white-space: nowrap;
+  padding: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #4a6cf7 #e0e0e0;
+}
+.events-list {
+  display: flex;
+  gap: 24px;
+   list-style: none;
+  padding: 10px;
+}
+ /* Event Grid */
+    #events-list {
+      display: flex;
+      gap: 20px;
+      padding: 0;
+    }
+
+.events-card {
+     flex: 0 0 auto;
+  width: 280px;
+  text-align: left;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+
+    }
+.events-card:hover {
+  transform: translateY(-7px) scale(1.04);
+  box-shadow: 0 12px 32px rgba(31, 112, 235, 0.18);
+  background: linear-gradient(90deg, #e3f0fd 0%, #f2fcff 100%);
+}
+.events-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0077cc;
+  margin-bottom: 8px;
+}
+.events-card p {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0;
+}
+/* Event Card */
+    
+
+    .events-card:hover {
+      transform: scale(1.02);
+    }
+
+    .events-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .events-details {
+      padding: 15px;
+    }
+
+    .events-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #0077cc;
+    }
+
+    .events-meta {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .events-desc {
+      font-size: 14px;
+      color: #444;
+    }
+</style>
+
+<!-- Firebase Events Script (same logic, works with new container) -->
+<!-- <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+  const firebaseConfig = {
+apiKey: "AIzaSyDWqiOubarIl64i2qeoJsh3-3WZKDt9BLc",
+  authDomain: "final-acm-30af1.firebaseapp.com",
+  projectId: "final-acm-30af1",
+  storageBucket: "final-acm-30af1.firebasestorage.app",
+  messagingSenderId: "644266603050",
+  appId: "1:644266603050:web:084fce9d5ba53e71120953",
+  measurementId: "G-D9J6XYF8ME"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  async function loadEvents() {
+    const eventsList = document.getElementById("eventsList");
+    eventsList.innerHTML = "<p>Loading events...</p>";
+    const querySnapshot = await getDocs(collection(db, "events"));
+    eventsList.innerHTML = ""; // clear old message
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const eventDiv = document.createElement("div");
+      eventDiv.classList.add("event-card");
+      eventDiv.innerHTML = `
+        <h3>${data.title}</h3>
+        <p>${data.description}</p>
+      `;
+      eventsList.appendChild(eventDiv);
+      
+    });
+  }
+  window.onload = loadEvents;
+   // --- ADD EVENT ---
+  function addEvents() {
+    var title = document.getElementById("events-title").value;
+    var desc = document.getElementById("events-desc").value;
+    var date = document.getElementById("events-date").value;
+    var time = document.getElementById("events-time").value;
+    var venue = document.getElementById("events-venue").value;
+    var image = document.getElementById("events-image").value;
+
+    db.collection("events").add({
+      title: title,
+      description: desc,
+      date: date,
+      time: time,
+      venue: venue,
+      image: image,
+      createdAt: new Date()
+    }).then(() => {
+      alert("Events Added!");
+      listEvents();
+      listAdminEvents();
+    });
+  }
+
+  // --- LIST EVENTS (User view) ---
+  function listEvents() {
+    db.collection("events").orderBy("createdAt","desc").get().then((querySnapshot) => {
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        html += `
+          <li class="events-card">
+            <img src="${data.image || 'https://via.placeholder.com/400x200'}" class="events-image" alt="Events Image">
+            <div class="events-details">
+              <div class="events-title">${data.title}</div>
+              <div class="events-meta">📅 ${data.date} | ⏰ ${data.time} | 📍 ${data.venue}</div>
+              <div class="events-desc">${data.description}</div>
+            </div>
+          </li>`;
+      });
+      document.getElementById("events-list").innerHTML = html;
+    });
+  }
+
+  // --- LIST EVENTS (Admin view) ---
+  function listAdminEvents() {
+    db.collection("events").get().then((querySnapshot) => {
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        html += `<li>${data.title}
+          <button class="delete-btn" onclick="deleteEvent('${doc.id}')">Delete</button>
+        </li>`;
+      });
+      document.getElementById("admin-events-list").innerHTML = html;
+    });
+  }
+
+  // --- DELETE EVENT ---
+  function deleteEvent(id) {
+    db.collection("events").doc(id).delete().then(() => {
+      alert("Event deleted!");
+      listEvents();
+      listAdminEvents();
+    });
+  } -->
+
+
+<!-- </script> -->
+
+</section>
+
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="team">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Leadership Team</h2>
+                <p class="section-subtitle">Meet the passionate individuals driving our chapter forward</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop" alt="President">
+                        <div class="member-overlay">
+                            <div class="member-social">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-github"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Arjun Sharma</h3>
+                        <p class="member-role">Chapter President</p>
+                        <p class="member-description">Leading innovation in AI and Machine Learning research.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop" alt="Vice President">
+                        <div class="member-overlay">
+                            <div class="member-social">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-github"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Priya Gupta</h3>
+                        <p class="member-role">Vice President</p>
+                        <p class="member-description">Passionate about web development and UI/UX design.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop" alt="Secretary">
+                        <div class="member-overlay">
+                            <div class="member-social">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-github"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Rohit Kumar</h3>
+                        <p class="member-role">Secretary</p>
+                        <p class="member-description">Expert in cybersecurity and blockchain technology.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://images.pexels.com/photos/1181695/pexels-photo-1181695.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop" alt="Treasurer">
+                        <div class="member-overlay">
+                            <div class="member-social">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-github"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Sneha Patel</h3>
+                        <p class="member-role">Treasurer</p>
+                        <p class="member-description">Data science enthusiast and competitive programmer.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section id="achievements" class="achievements">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Achievements</h2>
+                <p class="section-subtitle">Celebrating excellence and innovation</p>
+            </div>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Best ACM Chapter 2023</h3>
+                    <p>Recognized as the most active and innovative ACM student chapter in North India.</p>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3>Hackathon Champions</h3>
+                    <p>Our team won first place in the National Inter-College Hackathon 2023.</p>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Research Excellence</h3>
+                    <p>Published 15+ research papers in international conferences and journals.</p>
+                </div>
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community Impact</h3>
+                    <p>Trained over 1000+ students in various programming and technology skills.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle">Ready to join our community? Let's connect!</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Address</h3>
+                            <p>Tula's Institute<br>Dhoolkot, Dehradun<br>Uttarakhand - 248197</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Email</h3>
+                            <p>acm@tulas.edu.in<br>info@acmtulas.org</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Phone</h3>
+                            <p>+91 135 261 2000<br>+91 98765 43210</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="subject" name="subject" placeholder="Subject" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span>Send Message</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+<!-- Add this CSS and HTML to your existing page -->
+
+<style>
+/* Chatbot Styles */
+.chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+}
+
+.chatbot-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(25, 118, 210, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 24px;
+}
+
+.chatbot-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(25, 118, 210, 0.4);
+}
+
+.chatbot-window {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 450px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e3f2fd;
+}
+
+.chatbot-header {
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: between;
+}
+
+.chatbot-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.chatbot-title {
+    flex: 1;
+}
+
+.chatbot-title h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chatbot-title p {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.chatbot-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.chatbot-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f8fbff;
+}
+
+.message {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.message.bot {
+    justify-content: flex-start;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message-content {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.message.bot .message-content {
+    background: white;
+    border: 1px solid #e3f2fd;
+    border-bottom-left-radius: 5px;
+}
+
+.message.user .message-content {
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+.quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.quick-reply {
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+    border-radius: 15px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-reply:hover {
+    background: #1976d2;
+    color: white;
+}
+
+.chatbot-input {
+    padding: 15px 20px;
+    border-top: 1px solid #e3f2fd;
+    background: white;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    background: #f8fbff;
+    border: 1px solid #e3f2fd;
+    border-radius: 25px;
+    padding: 8px 15px;
+}
+
+.input-container input {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+}
+
+.input-container input::placeholder {
+    color: #90caf9;
+}
+
+.send-btn {
+    background: #1976d2;
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+}
+
+.send-btn:hover {
+    background: #1565c0;
+    transform: scale(1.1);
+}
+
+.typing-indicator {
+    display: none;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 18px;
+    border-bottom-left-radius: 5px;
+    border: 1px solid #e3f2fd;
+    max-width: 80%;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1976d2;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-10px);
+    }
+}
+
+@media (max-width: 768px) {
+    .chatbot-window {
+        width: 300px;
+        height: 400px;
+        right: -10px;
+    }
+}
+</style>
+
+<!-- Chatbot HTML -->
+<div class="chatbot-container">
+    <button class="chatbot-toggle" onclick="toggleChatbot()">
+        <i class="fas fa-comments"></i>
+    </button>
+    
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">
+            <div class="chatbot-avatar">
+                <img src="https://media.licdn.com/dms/image/v2/D560BAQETejMrOaMl9Q/company-logo_200_200/B56Zj9YNZ3HMAI-/0/1756597639780/tulasacm_logo?e=1760572800&v=beta&t=mQcyezljQHf2Rbo-rGAp-VDHFHC-TeblFMdvGbdFV2k" alt="ACM Tula's Logo">
+            </div>
+            <div class="chatbot-title">
+                <h4>ACM Assistant</h4>
+                <p>Online • Ready to help</p>
+            </div>
+            <button class="chatbot-close" onclick="toggleChatbot()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot">
+                <div class="message-content">
+                    Hi! I'm your ACM Tula's assistant. How can I help you today?
+                    <div class="quick-replies">
+                        <button class="quick-reply" onclick="sendMessage('Tell me about ACM')">About ACM</button>
+                        <button class="quick-reply" onclick="sendMessage('Upcoming events')">Events</button>
+                        <button class="quick-reply" onclick="sendMessage('How to join')">Join Us</button>
+                        <button class="quick-reply" onclick="sendMessage('Contact info')">Contact</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chatbot-input">
+            <div class="input-container">
+                <input type="text" id="chatbot-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="sendUserMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Chatbot functionality
+let chatbotOpen = false;
+
+function toggleChatbot() {
+    const chatWindow = document.getElementById('chatbot-window');
+    const toggleBtn = document.querySelector('.chatbot-toggle');
+    
+    chatbotOpen = !chatbotOpen;
+    
+    if (chatbotOpen) {
+        chatWindow.style.display = 'flex';
+        toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+        scrollToBottom();
+    } else {
+        chatWindow.style.display = 'none';
+        toggleBtn.innerHTML = '<i class="fas fa-comments"></i>';
+    }
+}
+
+function sendMessage(message) {
+    addMessage(message, 'user');
+    showTyping();
+    
+    setTimeout(() => {
+        hideTyping();
+        const response = getBotResponse(message);
+        addMessage(response, 'bot');
+    }, 1500);
+}
+
+function sendUserMessage() {
+    const input = document.getElementById('chatbot-input');
+    const message = input.value.trim();
+    
+    if (message) {
+        sendMessage(message);
+        input.value = '';
+    }
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendUserMessage();
+    }
+}
+
+function addMessage(content, type) {
+    const messagesContainer = document.getElementById('chatbot-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    
+    messageDiv.innerHTML = `
+        <div class="message-content">
+            ${content}
+        </div>
+    `;
+    
+    messagesContainer.insertBefore(messageDiv, document.getElementById('typing-indicator'));
+    scrollToBottom();
+}
+
+function showTyping() {
+    document.getElementById('typing-indicator').style.display = 'block';
+    scrollToBottom();
+}
+
+function hideTyping() {
+    document.getElementById('typing-indicator').style.display = 'none';
+}
+
+function scrollToBottom() {
+    const messagesContainer = document.getElementById('chatbot-messages');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function getBotResponse(message) {
+    const lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.includes('about') || lowerMessage.includes('acm')) {
+        return "ACM Tula's Institute is a student chapter dedicated to advancing computing as a science and profession. We organize workshops, hackathons, and tech talks to help students grow in the field of technology. 🚀";
+    }
+    
+    if (lowerMessage.includes('event') || lowerMessage.includes('workshop') || lowerMessage.includes('upcoming')) {
+        return "We regularly organize exciting events including:<br>• Coding competitions<br>• Technical workshops<br>• Guest lectures<br>• Hackathons<br><br>Check our events section for the latest updates! 📅";
+    }
+    
+    if (lowerMessage.includes('join') || lowerMessage.includes('member') || lowerMessage.includes('how to')) {
+        return "To join ACM Tula's:<br>1. Be a student at Tula's Institute<br>2. Fill out our membership form<br>3. Attend our orientation session<br>4. Pay the annual membership fee<br><br>Contact us for more details! 🎯";
+    }
+    
+    if (lowerMessage.includes('contact') || lowerMessage.includes('email') || lowerMessage.includes('phone')) {
+        return "📞 Contact Information:<br><br>📧 Email: acm@tulas.edu.in<br>📱 Phone: +91 135 261 2000<br>📍 Address: Tula's Institute, Dhoolkot, Dehradun<br><br>Follow us on social media for updates!";
+    }
+    
+    if (lowerMessage.includes('team') || lowerMessage.includes('leader') || lowerMessage.includes('president')) {
+        return "Our leadership team includes:<br>• Arjun Sharma - President<br>• Priya Gupta - Vice President<br>• Rohit Kumar - Secretary<br>• Sneha Patel - Treasurer<br><br>They're passionate about technology and leading our chapter forward! 👥";
+    }
+    
+    if (lowerMessage.includes('achievement') || lowerMessage.includes('award') || lowerMessage.includes('recognition')) {
+        return "We're proud of our achievements:<br>🏆 Best ACM Chapter 2023<br>🥇 National Hackathon Champions<br>📚 15+ Research Publications<br>👨‍💻 Trained 1000+ students<br><br>Excellence drives everything we do!";
+    }
+    
+    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+        return "Hello! Welcome to ACM Tula's Institute. I'm here to help you with any questions about our chapter, events, or how to get involved. What would you like to know? 😊";
+    }
+    
+    if (lowerMessage.includes('thank') || lowerMessage.includes('thanks')) {
+        return "You're welcome! Feel free to ask if you have any other questions about ACM Tula's. We're always here to help! 🙏";
+    }
+    
+    if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) {
+        return "Goodbye! Thanks for chatting with us. Don't forget to check out our events and consider joining ACM Tula's. See you soon! 👋";
+    }
+    
+    // Default response
+    return "I'm sorry, I didn't quite understand that. Here are some things I can help you with:<br><br>• Information about ACM Tula's<br>• Upcoming events and workshops<br>• How to join our chapter<br>• Contact information<br>• Our team and achievements<br><br>Just ask me anything! 💭";
+}
+
+// Initialize chatbot with welcome message
+document.addEventListener('DOMContentLoaded', function() {
+    // Chatbot is ready
+});
+</script>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="https://media.licdn.com/dms/image/v2/D560BAQETejMrOaMl9Q/company-logo_200_200/B56Zj9YNZ3HMAI-/0/1756597639780/tulasacm_logo?e=1760572800&v=beta&t=mQcyezljQHf2Rbo-rGAp-VDHFHC-TeblFMdvGbdFV2k" alt="ACM Logo">
+                        <span>ACM Tula's</span>
+                    </div>
+                    <p>Advancing Computing as a Science & Profession at Tula's Institute, Dehradun.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#events">Events</a></li>
+                        <li><a href="#team">Team</a></li>
+                        <li><a href="#team">Digital Library</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">ACM Digital Library</a></li>
+                        <li><a href="#">Learning Center</a></li>
+                        <li><a href="#">Career Center</a></li>
+                        <li><a href="#">Competitions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> acm@tulas.edu.in</li>
+                        <li><i class="fas fa-phone"></i> +91 135 261 2000</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Dehradun, Uttarakhand</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ACM Student Chapter - Tula's Institute. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+
+    <script src="script.js"></script>
+</body>
+</html>

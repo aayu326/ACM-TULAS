@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ACM Event Management</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <!-- ✅ Enhanced CSS Styling -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      min-height: 100vh;
+      color: #1565c0;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      color: #0d47a1;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(13, 71, 161, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 30px 0 40px 0;
+      background: linear-gradient(135deg, #1565c0, #0d47a1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Event Grid */
+    #event-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 0 20px;
+      list-style: none;
+    }
+
+    /* Enhanced Event Card */
+    .event-card {
+      background: linear-gradient(145deg, #ffffff, #f8fbff);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(13, 71, 161, 0.12);
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(21, 101, 192, 0.1);
+      position: relative;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .event-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1976d2, #42a5f5);
+    }
+
+    .event-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 16px 48px rgba(13, 71, 161, 0.2);
+    }
+
+    .event-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .event-card:hover .event-image {
+      transform: scale(1.05);
+    }
+
+    .event-details {
+      padding: 20px;
+      position: relative;
+    }
+
+    .event-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #0d47a1;
+      transition: color 0.3s ease;
+    }
+
+    .event-card:hover .event-title {
+      color: #1565c0;
+    }
+
+    .event-meta {
+      font-size: 14px;
+      color: #1976d2;
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-weight: 500;
+    }
+
+    .event-meta span {
+      background: rgba(25, 118, 210, 0.1);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    .event-desc {
+      font-size: 14px;
+      color: #424242;
+      line-height: 1.6;
+    }
+
+    /* Enhanced Input Fields */
+    input {
+      display: block;
+      width: 100%;
+      margin: 15px 0;
+      padding: 15px 20px;
+      border-radius: 12px;
+      border: 2px solid #e3f2fd;
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      transition: all 0.3s ease;
+      color: #1565c0;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 20px rgba(25, 118, 210, 0.2);
+      transform: translateY(-2px);
+    }
+
+    input::placeholder {
+      color: #90caf9;
+    }
+
+    /* Enhanced Buttons */
+    button {
+      background: linear-gradient(135deg, #1976d2, #1565c0);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      margin: 15px auto;
+      display: block;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(25, 118, 210, 0.4);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    #admin-panel, #admin-login {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 30px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 251, 255, 0.95));
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(13, 71, 161, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: scaleIn 0.6s ease-out;
+    }
+
+    hr {
+      margin: 50px auto;
+      width: 80%;
+      border: none;
+      border-top: 2px solid rgba(25, 118, 210, 0.2);
+      position: relative;
+    }
+
+    hr::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #1976d2, #42a5f5);
+      border-radius: 2px;
+    }
+
+    .delete-btn {
+      background: linear-gradient(135deg, #f44336, #d32f2f);
+      padding: 8px 16px;
+      font-size: 12px;
+      margin: 0;
+      display: inline-block;
+      min-width: auto;
+    }
+
+    .delete-btn:hover {
+      background: linear-gradient(135deg, #d32f2f, #c62828);
+    }
+
+    #admin-event-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    #admin-event-list li {
+      margin: 12px 0;
+      padding: 15px 20px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(248, 251, 255, 0.8));
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(25, 118, 210, 0.1);
+      transition: all 0.3s ease;
+      color: #1565c0;
+      font-weight: 500;
+    }
+
+    #admin-event-list li:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(25, 118, 210, 0.15);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      
+      #event-list {
+        grid-template-columns: 1fr;
+        padding: 0 15px;
+      }
+      
+      #admin-panel, #admin-login {
+        margin: 20px 15px;
+        padding: 20px;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <ul id="event-list"></ul>
+  <hr>
+
+  <!-- Admin Login Form -->
+  <div id="admin-login" style="display:block;">
+    <h2>🔐 Admin Login</h2>
+    <input type="email" id="admin-email" placeholder="✉️ Enter your email">
+    <input type="password" id="admin-password" placeholder="🔑 Enter your password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" style="display:none;">
+    <h2>⚙️ Admin Panel</h2>
+    <button onclick="logout()">Logout</button>
+
+    <h3>➕ Add Event</h3>
+    <input type="text" id="event-title" placeholder="🎯 Event Title">
+    <input type="text" id="event-desc" placeholder="📝 Event Description">
+    <input type="text" id="event-date" placeholder="📅 Event Date (e.g. 15 Sept 2025)">
+    <input type="text" id="event-time" placeholder="⏰ Event Time (e.g. 10:00 AM)">
+    <input type="text" id="event-venue" placeholder="📍 Venue (e.g. Seminar Hall)">
+    <input type="text" id="event-image" placeholder="🖼️ Image URL">
+    <button onclick="addEvent()">Add Event</button>
+
+    <h3>🗑️ Delete Event</h3>
+    <ul id="admin-event-list"></ul>
+  </div>
+
+
+<script>
+  // Firebase config
+  var firebaseConfig = {
+    apiKey: "AIzaSyDWqiOubarIl64i2qeoJsh3-3WZKDt9BLc",
+    authDomain: "final-acm-30af1.firebaseapp.com",
+    projectId: "final-acm-30af1",
+    storageBucket: "final-acm-30af1.appspot.com",
+    messagingSenderId: "644266603050",
+    appId: "1:644266603050:web:084fce9d5ba53e71120953",
+    measurementId: "G-D9J6XYF8ME"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
+
+  function login() {
+    var email = document.getElementById("admin-email").value;
+    var password = document.getElementById("admin-password").value;
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(() => alert("Logged in successfully!"))
+      .catch((error) => alert("Error: " + error.message));
+  }
+
+  function logout() {
+    firebase.auth().signOut().then(() => alert("Logged out!"));
+  }
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      document.getElementById("admin-panel").style.display = "block";
+      document.getElementById("admin-login").style.display = "none";
+      listAdminEvents();
+    } else {
+      document.getElementById("admin-panel").style.display = "none";
+      document.getElementById("admin-login").style.display = "block";
+    }
+  });
+
+  // --- ADD EVENT ---
+  function addEvent() {
+    var title = document.getElementById("event-title").value;
+    var desc = document.getElementById("event-desc").value;
+    var date = document.getElementById("event-date").value;
+    var time = document.getElementById("event-time").value;
+    var venue = document.getElementById("event-venue").value;
+    var image = document.getElementById("event-image").value;
+
+    db.collection("events").add({
+      title: title,
+      description: desc,
+      date: date,
+      time: time,
+      venue: venue,
+      image: image,
+      createdAt: new Date()
+    }).then(() => {
+      alert("Event Added!");
+      listEvents();
+      listAdminEvents();
+    });
+  }
+
+  // --- LIST EVENTS (User view) ---
+  function listEvents() {
+    db.collection("events").orderBy("createdAt","desc").get().then((querySnapshot) => {
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        html += `
+          <li class="event-card">
+            <img src="${data.image || 'https://via.placeholder.com/400x200'}" class="event-image" alt="Event Image">
+            <div class="event-details">
+              <div class="event-title">${data.title}</div>
+              <div class="event-meta">
+                <span>📅 ${data.date}</span>
+                <span>⏰ ${data.time}</span>
+                <span>📍 ${data.venue}</span>
+              </div>
+              <div class="event-desc">${data.description}</div>
+            </div>
+          </li>`;
+      });
+      document.getElementById("event-list").innerHTML = html;
+    });
+  }
+
+  // --- LIST EVENTS (Admin view) ---
+  function listAdminEvents() {
+    db.collection("events").get().then((querySnapshot) => {
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        html += `<li>${data.title}
+          <button class="delete-btn" onclick="deleteEvent('${doc.id}')">Delete</button>
+        </li>`;
+      });
+      document.getElementById("admin-event-list").innerHTML = html;
+    });
+  }
+
+  // --- DELETE EVENT ---
+  function deleteEvent(id) {
+    db.collection("events").doc(id).delete().then(() => {
+      alert("Event deleted!");
+      listEvents();
+      listAdminEvents();
+    });
+  }
+
+  // Initial load - only load events from Firebase
+  listEvents();
+</script>
+</body>
+</html>
